@@ -2,68 +2,95 @@
 <html>
 
 <head>
-    <title>Random Text Generator</title>
+    <title>Matrix Generator</title>
     <meta charset="UTF-8">
-    <style>
-        body {
-            background-color: black;
-            color: white;
-        }
-
-        #output {
-            width: 100%;
-            /* height: 400px; */
-            /* border: 1px solid #ccc; */
-            /* overflow-y: auto; */
-            white-space: pre;
-            /* font-family: monospace; */
-            font-family: sans-serif;
-            /* color: #19ff01;  */
-            color: #529b52;
-            font-size: 14px;
-            font-weight: bolder;
-            line-height: 16px;
-            letter-spacing: -4px;
-            writing-mode: vertical-lr;
-            text-orientation: upright;
-        }
-    </style>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="styles.css">
     <script src="colors.js"></script>
 </head>
 
 <body>
-    <h1>Random Text Generator</h1>
+    <main class="app-shell">
+        <section class="control-panel" aria-labelledby="pageTitle">
+            <div>
+                <h1 id="pageTitle">Matri<img src="img/logo.svg" alt="Matrix Generator" class="x-img"> Generator</h1>
+            </div>
+            <div class="options" aria-label="Generator options">
+                <label class="option">
+                    <input type="checkbox" id="lettersCheckbox" checked />
+                    <span>Letters</span>
+                </label>
 
-    <h3>Options:</h3>
+                <label class="option">
+                    <input type="checkbox" id="numbersCheckbox" checked />
+                    <span>Numbers</span>
+                </label>
 
-    <label>
-        <input type="checkbox" id="lettersCheckbox" checked /> Letters
-    </label>
+                <label class="option">
+                    <input type="checkbox" id="specialCharsCheckbox" checked />
+                    <span>Special Characters</span>
+                </label>
+            </div>
 
-    <br />
+            <label class="field">
+                <span>Columns</span>
+                <input type="number" id="numLinesInput" min="1" value="110" />
+            </label>
 
-    <label>
-        <input type="checkbox" id="numbersCheckbox" checked /> Numbers
-    </label>
+            <div class="actions">
+                <button id="generateButton" type="button">Generate</button>
+            </div>
+        </section>
 
-    <br />
-
-    <label>
-        <input type="checkbox" id="specialCharsCheckbox" checked /> Special Characters
-    </label>
-
-    <br />
-
-    <label>
-        Lines:
-        <input type="number" id="numLinesInput" min="1" value="80" />
-    </label>
-
-    <br />
-
-    <button id="generateButton">Generate</button>
-    <div id="output"></div>
+        <section class="output-panel" aria-label="Generated text">
+            <button id="copyButton" class="icon-button copy-button" type="button" aria-label="Copy output" title="Copy output">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
+            <div id="output"></div>
+        </section>
+    </main>
     <script>
+        let generatedPlainText = '';
+
+        async function copyOutput() {
+            const copyButton = document.getElementById('copyButton');
+
+            if (!generatedPlainText) {
+                copyButton.classList.add('is-empty');
+                copyButton.setAttribute('title', 'Nothing to copy');
+                setTimeout(() => {
+                    copyButton.classList.remove('is-empty');
+                    copyButton.setAttribute('title', 'Copy output');
+                }, 1200);
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(generatedPlainText);
+                copyButton.classList.add('is-copied');
+                copyButton.setAttribute('title', 'Copied');
+            } catch (error) {
+                const textarea = document.createElement('textarea');
+                textarea.value = generatedPlainText;
+                textarea.setAttribute('readonly', '');
+                textarea.className = 'copy-buffer';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                copyButton.classList.add('is-copied');
+                copyButton.setAttribute('title', 'Copied');
+            }
+
+            setTimeout(() => {
+                copyButton.classList.remove('is-copied');
+                copyButton.setAttribute('title', 'Copy output');
+            }, 1200);
+        }
+
         function generateRandomText() {
             const outputDiv = document.getElementById('output');
             const lettersCheckbox = document.getElementById('lettersCheckbox');
@@ -89,6 +116,7 @@
 
             const numLines = parseInt(numLinesInput.value);
             let generatedText = '';
+            generatedPlainText = '';
 
             const minLength = 15;
             //   const startColor = '#ff0000';
@@ -102,17 +130,21 @@
                     const randomIndex = Math.floor(Math.random() * characters.length);
                     const randomOpacity = Math.random() + 0.1;
                     //   const randomColor = getRandomColorBetween(startColor, endColor);
-                    line += `<span style="opacity: ${randomOpacity};">${characters.charAt(randomIndex)}</span>`;
+                    const character = characters.charAt(randomIndex);
+                    line += `<span style="opacity: ${randomOpacity};">${character}</span>`;
                 }
 
                 generatedText += `${line}<br />`;
+                generatedPlainText += `${line.replace(/<[^>]*>/g, '')}\n`;
             }
 
             outputDiv.innerHTML = generatedText;
         }
 
         const generateButton = document.getElementById('generateButton');
+        const copyButton = document.getElementById('copyButton');
         generateButton.addEventListener('click', generateRandomText);
+        copyButton.addEventListener('click', copyOutput);
     </script>
 </body>
 
