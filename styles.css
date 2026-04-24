@@ -58,7 +58,7 @@ body::before {
 .control-panel {
     align-self: start;
     display: flex;
-    align-items: end;
+    align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 22px;
@@ -66,9 +66,39 @@ body::before {
     border-radius: 8px;
 }
 
-.control-panel > div:first-child {
+.brand-card {
+    display: flex;
+    align-items: center;
+    flex: 0 1 300px;
+    gap: 14px;
+    min-width: 260px;
+    border: 1px solid rgba(147, 255, 156, 0.24);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.22);
+    padding: 12px;
+}
+
+.brand-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+}
+
+.brand-info {
+    min-width: 0;
+}
+
+.brand-info p {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.title-block {
     flex: 1 1 320px;
-    min-width: 240px;
+    min-width: 260px;
 }
 
 .eyebrow {
@@ -90,6 +120,28 @@ h1 {
     height: clamp(44px, 6vw, 64px);
     vertical-align: middle;
     margin-bottom: 5px;
+}
+
+.brand-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+}
+
+.brand-links a {
+    border: 1px solid rgba(147, 255, 156, 0.3);
+    border-radius: 6px;
+    color: var(--green-strong);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 7px 9px;
+    text-decoration: none;
+}
+
+.brand-links a:hover {
+    border-color: var(--green);
+    background: rgba(86, 240, 125, 0.12);
 }
 
 .options {
@@ -266,7 +318,8 @@ button:active {
         flex-direction: column;
     }
 
-    .control-panel > div:first-child {
+    .brand-card,
+    .title-block {
         min-width: 0;
     }
 
